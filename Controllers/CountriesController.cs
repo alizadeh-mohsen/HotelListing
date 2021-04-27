@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HotelListing.Data;
 using HotelListing.Data.DTOs;
 using HotelListing.Service.interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Serilog.Core;
-using ILogger = Serilog.ILogger;
 
 namespace HotelListing.Controllers
 {
@@ -33,11 +28,13 @@ namespace HotelListing.Controllers
 
         // GET: api/Countries
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<CountryDto>>> GetCountryDto()
         {
             try
             {
-                var countries = await _unitOfWork.CountryRepository.GetAll(includes: new List<string> { "HotelDto" });
+                var countries = await _unitOfWork.CountryRepository.GetAll(includes: new List<string> { "Hotels" });
                 var result = _mapper.Map<IList<CountryDto>>(countries);
                 return Ok(result);
             }
@@ -49,19 +46,29 @@ namespace HotelListing.Controllers
         }
 
         //    // GET: api/Countries/5
-        //    [HttpGet("{id}")]
-        //    public async Task<ActionResult<CountryDto>> GetCountryDto(int id)
-        //    {
-        //        //var countryDto = await _context.CountryDto.FindAsync(id);
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CountryDto>> GetCountryDto(int id)
+        {
+            try
+            {
+                var country = await _unitOfWork.CountryRepository.Get(c => c.Id == id, includes: new List<string> { "Hotels" });
 
-        //        //if (countryDto == null)
-        //        //{
-        //        //    return NotFound();
-        //        //}
+                if (country == null)
+                    return NotFound();
 
-        //        //return countryDto;
-        //        return NoContent();
-        //    }
+                var result = _mapper.Map<CountryDto>(country);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e,"server error");
+                return StatusCode(500, e);
+            }
+
+        }
 
         //    // PUT: api/Countries/5
         //    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
