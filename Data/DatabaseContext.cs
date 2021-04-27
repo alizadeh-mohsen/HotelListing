@@ -1,5 +1,6 @@
 ﻿using HotelListing.Data.model;
 using Microsoft.EntityFrameworkCore;
+using HotelListing.Data.DTOs;
 
 namespace HotelListing.Data
 {
@@ -82,5 +83,8 @@ namespace HotelListing.Data
 
                 );
         }
+
+
+        public DbSet<HotelListing.Data.DTOs.CountryDto> CountryDto { get; set; }
     }
 }
