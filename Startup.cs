@@ -22,11 +22,16 @@ namespace HotelListing
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
+
+
+            services.AddAuthentication();
+            
+            services.ConfigureIdentity();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", builder =>
@@ -34,8 +39,11 @@ namespace HotelListing
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
+
             services.AddAutoMapper(typeof(AutoMapperProfile));
+            
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelListing", Version = "v1" });
@@ -45,7 +53,6 @@ namespace HotelListing
                 .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -56,6 +63,7 @@ namespace HotelListing
             }
 
             app.UseCors("AllowAll");
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();

@@ -1,10 +1,11 @@
-﻿using HotelListing.Data.model;
-using Microsoft.EntityFrameworkCore;
-using HotelListing.Data.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using HotelListing.Data.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HotelListing.Data
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : IdentityDbContext<ApiUser>
     {
         public DatabaseContext(DbContextOptions options) : base(options)
         {
@@ -16,6 +17,7 @@ namespace HotelListing.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Country>().HasData(
             new Country
             {

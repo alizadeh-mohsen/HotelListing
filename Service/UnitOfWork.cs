@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using HotelListing.Data;
-using HotelListing.Data.model;
+using HotelListing.Data.Model;
 using HotelListing.Service.interfaces;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace HotelListing.Service
