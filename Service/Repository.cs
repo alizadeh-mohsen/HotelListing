@@ -32,7 +32,7 @@ namespace HotelListing.Service
 
             if (includes != null)
                 foreach (var dbSet in includes)
-                    query.Include(dbSet);
+                    query = query.Include(dbSet);
 
             if (orderBy != null)
                 query = orderBy(query);
@@ -46,10 +46,12 @@ namespace HotelListing.Service
             IQueryable<T> query = _dbSet;
 
             if (includes != null)
+            {
                 foreach (var dbSet in includes)
                 {
-                    query.Include(dbSet);
+                    query = query.Include(dbSet);
                 }
+            }
 
             return await query.AsNoTracking().FirstOrDefaultAsync(expression);
 
